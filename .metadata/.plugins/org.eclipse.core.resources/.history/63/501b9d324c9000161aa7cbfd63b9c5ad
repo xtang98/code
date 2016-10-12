@@ -81,30 +81,15 @@ public class TreeNode {
 		TreeNode cur = root;
 		TreeNode pre = null;
 		pushToLeaf(s, cur);
-		
-		while (!s.empty())  {
-			cur = s.peek();
-			if (cur.right ==null || cur.right == pre) {
-				//if cur.right is null or ALREADY visited, pop&visit
-				pre = s.pop();
-				visit(pre);
-			} else {
-				//this means a "new" right node, do push-to-leaf operation
-				pushToLeaf(s, cur.right);
+		while (!s.empty()) {
+			cur = s.pop();
+			visit(cur);
+			if (cur.right != pre && cur.right !=null) {
+				pushToLeaf(s,cur.right);
 			}
-		} ;
+			pre = cur;
+		}
 	}
-	/* code walk through for
-	 *       3
-	 *      / \
-	 *     1   2
-	 * init, s=[3,1]
-	 * #1: cur=1, pop 1, pre=1 s=[3] visit 1
-	 * #2: cur=3, push 2, s=[3,2] 
-	 * #3: cur=2, pop 2, pre=2, s=[3], visit 2
-	 * #4: cur=3, cur.right == pre, pop 3, pre=3, visit 3
-	 * 
-	 */
 	public static void main(String[] args) {
 		TreeNode node = new TreeNode(10);
 		node.left = new TreeNode(5);
