@@ -1,0 +1,24 @@
+package algorithms.Strings;
+
+import static org.junit.Assert.*;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+public class StringProcessingTest {
+
+	@Before
+	public void setUp() throws Exception {
+	}
+
+	@After
+	public void tearDown() throws Exception {
+	}
+
+	@Test
+	public void MatchedWithStar() {
+		assertEquals(true, StringProcessing.MatchedWithStar("aab", "a*"));
+	}
+
+}

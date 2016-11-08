@@ -1,5 +1,9 @@
 package algorithms.trees;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Stack;
 
 public class TreeNode {
@@ -11,7 +15,7 @@ public class TreeNode {
 		this.val = val;
 	}
 
-	public static void visit(TreeNode n) {System.out.print(n.val+",");}
+	private static void visit(TreeNode n) {System.out.print(n.val+",");}
 	public static void preTraversal(TreeNode root) {
 		Stack<TreeNode> s = new Stack<TreeNode>();
 		s.push(root);
@@ -68,31 +72,31 @@ public class TreeNode {
 	 */
 	
 	
-	public static void pushToLeaf(Stack<TreeNode> s, TreeNode cur) {
-		while(cur!=null) {
-			s.push(cur);
-			if (cur.left != null) cur = cur.left;
-			else cur = cur.right;
-		}
-	}
+
 	public static void postTraversal(TreeNode root) {
-		//push left all the way, then right, then left all the way, until leaf
-		Stack<TreeNode> s = new Stack<TreeNode>();
-		TreeNode cur = root;
-		TreeNode pre = null;
-		pushToLeaf(s, cur);
+		if (root == null) return;
 		
-		while (!s.empty())  {
-			cur = s.peek();
-			if (cur.right ==null || cur.right == pre) {
-				//if cur.right is null or ALREADY visited, pop&visit
-				pre = s.pop();
-				visit(pre);
+		Stack<TreeNode> s = new Stack<TreeNode>();
+		TreeNode cur = root, pre = null;
+		
+		while (cur != null || !s.empty())  {
+			if (cur != null) {
+				//push left
+				s.push(cur);
+				cur = cur.left;
 			} else {
-				//this means a "new" right node, do push-to-leaf operation
-				pushToLeaf(s, cur.right);
+				//peek, process right, visit if right part is DONE
+				//DONE means: 1) right is null 2) right is visited already
+				cur = s.peek();
+				if (cur.right == null || cur.right == pre) { //right is DONE!
+					pre = s.pop();
+					visit(pre);
+					cur = null; //so that it will keeps popping
+				} else {
+					cur = cur.right; //if right is not null, next round it will do push-left
+				}
 			}
-		} ;
+		} 
 	}
 	/* code walk through for
 	 *       3
@@ -105,6 +109,70 @@ public class TreeNode {
 	 * #4: cur=3, cur.right == pre, pop 3, pre=3, visit 3
 	 * 
 	 */
+	
+	
+	 
+	/**
+	 * Two elements of a binary search tree (BST) are swapped by mistake.
+		Recover the tree without changing its structure.
+		Note:
+		A solution using O(n) space is pretty straight forward. Could you devise a constant space solution?
+		Subscribe to see which companies asked this question
+	 * @param root
+	 */
+	 // my idea is to use in-order traversal to identify "anti-pattern", see below for detail:
+	 // 1,2,3,4,5
+	 // 1,5,3,4,2
+	 //    pre =1, cur=5 ok, 
+	 //    pre =5, cur=3 anti-pattern, take the pre
+	 //... pre=4, cur=2, anti-pattern, take the cur
+	// what about 1,2==> 2,1
+	// what about 1,2,3 ==> 1,3,2: pre=3, cur=2, anti, take pre as first, second=cur
+    public static void recoverTree(TreeNode root) {
+        // in order iterator go over once, 
+        // find the first node: it's next's value goes down instead of up
+        // find the second node: it's gong down comparing with its pre
+        TreeNode first=null, second=null;
+        if (root == null) return;
+        Stack<TreeNode> s = new Stack<TreeNode>();
+        TreeNode cur = root, pre=null;
+        while (cur != null || !s.empty()) {
+            //push cur then move left
+            if (cur != null) {
+                s.push(cur);
+                cur = cur.left;
+            } else {
+                //do some visiting, check anti-pattens
+                cur = s.pop();
+                //compare it with pre
+                if (pre != null && cur.val<pre.val) {
+                    if (first == null) first = pre; //note need to handle two elements [2,1], so assign second always even for the first encounter
+                    second = cur; 
+                }
+                pre= cur;
+                //update cur
+                cur = cur.right;
+            }
+        }
+        
+        //swap value for first and second
+        if (first == null) return;
+        int tmp = first.val;
+        first.val = second.val;
+        second.val = tmp;
+        
+    }
+    
+    public static boolean identical(TreeNode n1, TreeNode n2) {
+    	if (n1 == null && n2 == null) return true;
+    	if ((n1 != null && n2 == null) || (n1 == null && n2 != null)) return false;
+    	if (n1 != null && n2 != null && n1.val != n2.val) return false;
+    	//go recursive if both not null and value matches
+    	return identical(n1.left, n2.left) && identical(n1.right, n2.right);
+    }
+    
+    //isBST: recursive + pass on range from root all the way down...
+    //closestValue: recursive + pass on <min, node> pair all the way down...
 	public static void main(String[] args) {
 		TreeNode node = new TreeNode(10);
 		node.left = new TreeNode(5);
@@ -119,7 +187,20 @@ public class TreeNode {
 		System.out.println();
 		TreeNode.postTraversal(node);
 		
-
+		TreeNode r = new TreeNode(3);
+		r.left = new TreeNode(1);
+		r.right = new TreeNode(2);
+		TreeNode.inTraversal(r);
+		TreeNode.recoverTree(r);
+		TreeNode.inTraversal(r);
+		
+		List<List<Integer>> listOfList = new ArrayList<List<Integer>>();
+		listOfList.add(new ArrayList<Integer>(Arrays.asList(1,2,3,4)));
+		listOfList.add(new LinkedList<Integer>(Arrays.asList(30,40)));
+		//listOfList.forEach(l=>System.out.println(l));; //l => println(Arrays.toString(l.toArray()))
+		for (List<Integer> l: listOfList) {
+			System.out.println(Arrays.toString(l.toArray()));
+		}
 	}
 
 }

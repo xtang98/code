@@ -1,0 +1,21 @@
+package algorithms.Trie;
+//assume the trie handles 26 lower cases chars only
+class TrieNode {
+	boolean isLeaf;
+	TrieNode[] arr;
+	
+	public TrieNode() {arr = new TrieNode[26];}
+}
+public class ArrayTrie {
+	
+
+	public ArrayTrie() {
+		
+	}
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+}

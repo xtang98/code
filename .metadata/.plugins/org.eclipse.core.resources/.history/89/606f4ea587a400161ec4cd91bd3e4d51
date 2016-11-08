@@ -1,0 +1,41 @@
+package algorithms.trees;
+
+import java.util.LinkedList;
+import java.util.Queue;
+
+public class BinaryTree {
+	/**
+	 * For each level, print the avg of all nodes in that level (avg using double?! clarify the requirements)
+	 * @param root
+	 */
+	public static void printAverageByLevel(TreeNode root) {
+		// level by levle, accumulate total, when switch level, do (float)total/n
+		if (root == null) return;
+		Queue<TreeNode> q = new LinkedList<TreeNode>();
+		q.add(root);
+		int curCount=1,nextCount=0, curMax = curCount, total =0;
+		while(!q.isEmpty()) {
+			//deque and enque, update counters
+			TreeNode cur = q.remove();
+			curCount--;
+			if (cur.left != null) {q.add(cur.left);nextCount++;}
+			if (cur.right != null) {q.add(cur.right);nextCount++;}
+			
+			//add to total
+			total += cur.val;
+			
+			//if curCount ==0, switch row
+			//avg = (float)total/curMax, update curMax as well
+			//print out avg
+			if (curCount == 0) {
+				double avg = (double)total/curMax;
+				System.out.println(avg);
+				curCount = nextCount; 
+				nextCount=0;
+				curMax = curCount;
+				total = 0;
+			}
+		}
+	}
+
+}

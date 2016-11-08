@@ -1,0 +1,29 @@
+package algorithms.sorting;
+
+public class Sort {
+	public static void mergeSort(int[] nums) {
+		mergeSort(nums, 0, nums.length-1); //[2,1] (nums, 0,1)
+	}
+	private static void mergeSort(int[] nums, int left, int right) {
+		int len = 	right - left + 1;
+		if (len<2) return;
+
+		//divide and merge
+		int mid = left+len/2;
+		mergeSort(nums, left, mid-1);
+		mergeSort(nums, mid, right);
+		//merge phase [2,1] ==> [2] [1]
+		int[] marr = new int[len];
+		int i=left, j= mid, idx=0;
+		while (i<mid && j<=right) {
+			if (nums[i]<nums[j]) marr[idx++] = nums[i++];
+			else marr[idx++] = nums[j++];
+		}
+		while(i<mid) marr[idx++] = nums[i++];
+		while(j<=right) marr[idx++] = nums[j++];
+		//copy it back from left to right
+		for (int k=0; k<marr.length; k++) {
+			nums[left+k] = marr[k];
+		}
+	}
+}

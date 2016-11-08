@@ -1,0 +1,9 @@
+package algorithms.Trie;
+
+public class Boggle {
+
+	public Boggle() {
+		// TODO Auto-generated constructor stub
+	}
+
+}

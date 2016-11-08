@@ -1,0 +1,41 @@
+/**
+ * 
+ */
+package algorithms.Trie;
+
+import java.util.HashMap;
+
+/**
+ * Implement Trie using HashMap, not as fast as array-based, but flexible and less space wasted for sparse Trie
+ * @author xuerong.tang
+ *
+ */
+
+class HashTrieNode {
+	boolean isLeaf;
+	HashMap<Character, TrieNode> children;
+	HashTrieNode() {children = new HashMap<Character, TrieNode>();}
+}
+/**
+ * public void insert(String word): insert word into trie
+ * public boolean find(String word): returns true if word is found
+ * private TrieNode findNode(String prefix): return the node if prefix is found
+ * public boolean startWith(String prefix): return true if the prefix is in the trie
+ * @author xuerong.tang
+ *
+ */
+public class HashTrie {
+	TrieNode root = new TrieNode();
+	public void insert(String word) {
+		TrieNode cur = root;
+		for (int i=0; i<word.length(); i++) {
+			char c = word.charAt(i);
+			//if c is not already in trie insert it
+			if (!cur.children.containsKey(c)) {
+				cur.children.put(c, new TrieNode());
+			}
+			cur = cur.children.get(c);
+		}
+		cur.isLeaf = true;
+	}
+}

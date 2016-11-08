@@ -1,0 +1,103 @@
+/**
+ * 
+ */
+package algorithms.trees;
+
+import java.util.ArrayDeque;
+import java.util.LinkedList;
+import java.util.Queue;
+
+/**
+ * @author xuerong.tang
+ *
+ */
+public class TreeEncode {
+	
+    // let me play with this format 1<2,3<4,5>>, in general
+    // r, r<left,>, r<,right>, r<left, right> 
+
+    // Encodes a tree to a single string.
+    public static String serialize(TreeNode root) {
+        if (root == null) return "";
+        String head = Integer.toString(root.val);
+        if (root.left == null && root.right == null) return head;
+        //go recursive, at least one child exists
+        String left = serialize(root.left);
+        String right = serialize(root.right);
+        String ret = head+"<"+left+","+right+">";
+        //System.out.println(ret);
+        return ret;
+    }
+
+    // Decodes your encoded data to tree.
+    public static TreeNode deserialize(String data) {
+        //System.out.println("data="+data);
+        if (data == null || data.length() ==0) return null;
+        if (!data.contains("<")) { // no subtree anymore
+            return new TreeNode(Integer.parseInt(data));
+        } else { //deal with subtree
+            int leftIdx = data.indexOf("<");
+            int rightIdx = data.lastIndexOf(">");
+            int commaIdx = findRightComma(data, leftIdx, rightIdx);
+            TreeNode root = new TreeNode(Integer.parseInt(data.substring(0,leftIdx)));
+            String left = data.substring(leftIdx+1, commaIdx);//<,2> ==> empty string
+            String right = data.substring(commaIdx+1, rightIdx);//<3,> ==>empty string
+            root.left = deserialize(left);
+            root.right = deserialize(right);
+            return root;
+        }
+    }
+    
+    private static int findRightComma(String data, int leftIdx, int rightIdx) {
+        //return the comma that has no left < after leftIdx
+        int count=0;
+        for (int i=leftIdx+1; i<rightIdx; i++) {
+            if (data.charAt(i) == '<') count++;
+            if (data.charAt(i) == '>') count--;
+            if (count == 0 && data.charAt(i) ==',') return i;
+        }
+        return -1;
+    }
+
+    //this is to implement leetCode OJ serializer
+    public static String serializeOJ(TreeNode root) {
+    	if (root == null) return null;
+    	Queue<TreeNode> q = new LinkedList<TreeNode>(); //add/remove/element
+    	q.add(root);
+    	StringBuilder sb = new StringBuilder();
+    	while (!q.isEmpty()) {
+    		TreeNode cur = q.remove();
+    		if (cur == null) {
+    			if (!q.isEmpty()) sb.append("null");
+    			continue;
+    		}
+    		if (cur.left != null || cur.right != null) {
+    			q.add(cur.left);
+    			q.add(cur.right);
+    		}
+    		sb.append(Integer.toString(cur.val));
+    		if (!q.isEmpty()) {sb.append(',');}
+    	}
+    	return sb.toString();
+    }
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		TreeNode root = new TreeNode(1);
+		root.left = new TreeNode(2);
+		root.right = new TreeNode(3);
+		root.left.left = new TreeNode(4);
+		String treeStr = TreeEncode.serialize(root);
+		System.out.println(treeStr);
+		TreeNode root1 = TreeEncode.deserialize(treeStr);
+		System.out.println(TreeEncode.serialize(root1));
+		//compare root and root1?
+		System.out.println("They are identical? "+TreeNode.identical(root, root1));
+		
+		String treeStrOJ = TreeEncode.serializeOJ(root);
+		System.out.println(treeStrOJ);
+	}
+
+}

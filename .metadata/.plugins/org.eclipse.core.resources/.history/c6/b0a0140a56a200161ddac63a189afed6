@@ -1,0 +1,25 @@
+package algorithms.Trie;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+public class TrieTest {
+
+	@Test
+	public void testValidWord() {
+		ArrayTrie trie = new ArrayTrie();
+		String word = "abc";
+		assertFalse(trie.find(word));
+		trie.insert("abc");
+		assertTrue(trie.find(word));
+	}
+	
+	@Test
+	public void testInvalidWord() {
+		ArrayTrie trie = new ArrayTrie();
+		String word = "Abc";
+		trie.insert(word);
+	}
+
+}

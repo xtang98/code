@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename type &apos;algorithms.trees.PriorityQueue&apos; to &apos;MaxPriorityQueue&apos;&#x0A;- Original project: &apos;Trees&apos;&#x0A;- Original element: &apos;algorithms.trees.PriorityQueue&apos;&#x0A;- Renamed element: &apos;algorithms.trees.MaxPriorityQueue&apos;&#x0A;- Update references to refactored element&#x0A;- Update textual occurrences in comments and strings" description="Rename type &apos;PriorityQueue&apos;" flags="589830" id="org.eclipse.jdt.ui.rename.type" input="/src&lt;algorithms.trees{PriorityQueue.java[PriorityQueue" matchStrategy="1" name="MaxPriorityQueue" qualified="false" references="true" similarDeclarations="false" stamp="1476587900923" textual="false" version="1.0"/>
+</session>

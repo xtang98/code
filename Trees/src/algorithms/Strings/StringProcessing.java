@@ -1,0 +1,87 @@
+package algorithms.Strings;
+
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.PriorityQueue;
+
+public class StringProcessing {
+	/***
+	 * return true if input string s matches p which is a string with * in it
+	 * a, ab, aab all match a*, but b won't match a*
+	 * use boolean m[i][j] indicate whether s[0..i-1] matches p[0..j-1], need to get m[n1][n2] where 
+	 * n1 = len(s), n2=len(p) 
+	 * @param s
+	 * @param p
+	 * @return
+	 */
+	public static boolean MatchedWithStar(String s, String p) {
+		int n1 = s.length(), n2 = p.length();
+		boolean[][] m = new boolean[n1+1][n2+1];
+		for (int i=0; i<=n1; i++) {
+			for (int j=0; j<=n2; j++) {
+				//init condition (i=0 or j=0 precomputed)
+				if (i==0 || j==0) {
+					if (i==0 && j==0) m[i][j] = true; //empty matches empty
+					else if (j==0) m[i][j] = false; //non empty s won't match empty p
+					else m[i][j] = (p.charAt(j-1) == '*')? m[i][j-1]: false;
+				} else {
+					//transit m[i][j] =   
+					//if (p[j-1] != '*"): m[i-1][j-1] if s[i-1] == p[j-1] else false; 
+					//else:	or(m[i-1][j-1], m[i-1][j], m[i][j-1]) use * for one, any, none
+					//0...i-1, i
+					//0...j-1, *
+					//Note: if '+' is allowed as well, then
+					// m[i][j] = m[i-1][j-1] || m[i-1][j] (+ has to be used!!)
+					if (p.charAt(j-1) != '*') {
+						m[i][j] = (s.charAt(i-1) == p.charAt(j-1))? m[i-1][j-1]: false;
+ 					} else {
+ 						m[i][j] = (m[i-1][j-1] || m[i-1][j] || m[i][j-1]);
+ 					}
+				}
+			}
+		}
+		return m[n1][n2];
+	}
+
+	    public static String frequencySort(String s) {
+	        if (s == null || s.length()<3) return s;
+	        //hash it char->(char,count) pair
+	        HashMap<Character, Pair> map = new HashMap<Character, Pair>();
+	        for (int i=0; i<s.length(); i++) {
+	            Character c = s.charAt(i);
+	            if (!map.containsKey(c)) {
+	                map.put(c, new Pair(c,1));
+	            } else {
+	                map.get(c).count++;
+	            }
+	        }
+	        //put paris in priority queue, reverse order
+	        Comparator<Pair> pairComparator = new Comparator<Pair>(){
+	            @Override
+	            public int compare(Pair a, Pair b) {
+	                return b.count - a.count; // in reverse order
+	            } 
+	        };
+	        PriorityQueue<Pair> pq = new PriorityQueue<Pair>(10, pairComparator);
+	        for (Character c: map.keySet()) {
+	            pq.offer(map.get(c));
+	        }
+	        //convert it to output
+	        StringBuilder sb = new StringBuilder();
+	        while (pq.size()>0) {
+	            Pair pair = pq.poll();
+	            for (int i=0; i<pair.count; i++) {
+	                sb.append(pair.c);
+	            }
+	        }
+	        return sb.toString();
+	    }
+	}
+	class Pair {
+	    Character c;
+	    int count;
+	    public Pair(Character c, int count) {
+	        this.c=c;
+	        this.count = count;
+	    }
+}

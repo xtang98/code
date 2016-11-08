@@ -1,0 +1,41 @@
+package algorithms.Strings;
+
+public class StringProcessing {
+	/***
+	 * return true if input string s matches p which is a string with * in it
+	 * a, ab, aab all match a*, but b won't match a*
+	 * use boolean m[i][j] indicate whether s[0..i-1] matches p[0..j-1], need to get m[n1][n2] where 
+	 * n1 = len(s), n2=len(p) 
+	 * @param s
+	 * @param p
+	 * @return
+	 */
+	public static boolean MatchedWithStar(String s, String p) {
+		int n1 = s.length(), n2 = p.length();
+		boolean[][] m = new boolean[n1+1][n2+1];
+		for (int i=0; i<=n1; i++) {
+			for (int j=0; j<=n2; j++) {
+				//init condition (i=0 or j=0 precomputed)
+				if (i==0 || j==0) {
+					if (i==0 && j==0) m[i][j] = true; //empty matches empty
+					else if (j==0) m[i][j] = false; //non empty s won't match empty p
+					else m[i][j] = (p.charAt(j-1) == '*')? m[i][j-1]: false;
+				} else {
+					//transit m[i][j] =   
+					//if (p[j-1] != '*"): m[i-1][j-1] if s[i-1] == p[j-1] else false; 
+					//else:	or(m[i-1][j-1], m[i-1][j], m[i][j-1]) use * for one, any, none
+					//0...i-1, i
+					//0...j-1, *
+					//Note: if '+' is allowed as well, then
+					// m[i][j] = m[i-1][j-1] || m[i-1][j] (+ has to be used!!)
+					if (p.charAt(j-1) != '*') {
+						m[i][j] = (s.charAt(i-1) == p.charAt(j-1))? m[i-1][j-1]: false;
+ 					} else {
+ 						m[i][j] = (m[i-1][j-1] || m[i-1][j] || m[i][j-1]);
+ 					}
+				}
+			}
+		}
+		return m[n1][n2];
+	}
+}

@@ -1,0 +1,34 @@
+package algorithms.sorting;
+
+import static org.junit.Assert.*;
+
+import java.util.Arrays;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+public class SortTest {
+
+	@Before
+	public void setUp() throws Exception {
+	}
+
+	@After
+	public void tearDown() throws Exception {
+	}
+
+	@Test
+	public void testMergeSort() {
+		int[] nums = new int[] {1,2,3};
+		System.out.println(Arrays.toString(nums));
+		Sort.mergeSort(nums);
+		assertTrue("[1,2,3]".equals(Arrays.toString(nums)));
+		
+		//nums = new int[]{3,2,1};
+		//Sort.mergeSort(nums);
+		//assertEquals( "[1,2,3]", Arrays.toString(nums));
+		
+	}
+
+}
