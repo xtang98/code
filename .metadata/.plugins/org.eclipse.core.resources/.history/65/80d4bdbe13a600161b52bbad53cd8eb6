@@ -9,7 +9,7 @@ import java.util.Queue;
 import java.util.Stack;
 
 /**
- * @author xtang98
+ * @author xuerong.tang
  *
  */
 public class TreeEncode {

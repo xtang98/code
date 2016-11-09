@@ -17,7 +17,7 @@ class TrieNode {
  * TrieNode searchNode(String s): return the node if s shows up in the tree (may not be a valid word); null otherwise
  * boolean startWith(String prefix): returns true if prefix shows up in the tree
  * 
- * @author 
+ * @author xuerong.tang
  *
  */
 public class ArrayTrie {

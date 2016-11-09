@@ -14,7 +14,7 @@ import org.junit.Test;
 import junit.framework.TestCase;
 
 /**
- * @author xtang98
+ * @author xuerong.tang
  *
  */
 public class BoggleTest extends TestCase {

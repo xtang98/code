@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 /**
  * Implement Trie using HashMap, not as fast as array-based, but flexible and less space wasted for sparse Trie
- * @author xtang98
+ * @author xuerong.tang
  *
  */
 
@@ -21,7 +21,7 @@ class HashTrieNode {
  * public boolean find(String word): returns true if word is found
  * private TrieNode findNode(String prefix): return the node if prefix is found
  * public boolean startWith(String prefix): return true if the prefix is in the trie
- * @author xtang98
+ * @author xuerong.tang
  *
  */
 public class HashTrie {
