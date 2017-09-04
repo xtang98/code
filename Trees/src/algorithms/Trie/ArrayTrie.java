@@ -5,14 +5,18 @@ import java.util.Arrays;
 
 //assume the trie handles 26 lower cases chars only
 class TrieNode {
-	boolean isLeaf;
-	TrieNode[] arr;
+	boolean isLeaf; //package accessible
+	TrieNode[] arr; //package accessible
 	
 	public TrieNode() {arr = new TrieNode[26];}
+	public TrieNode(boolean leaf) {
+		this();
+		isLeaf = leaf;
+	}
 }
 /**
  * Trie common methods:
- * insert(String word): inser the word into the trie
+ * insert(String word): insert the word into the trie
  * boolean find(String word): return true if it is a valid word
  * TrieNode searchNode(String s): return the node if s shows up in the tree (may not be a valid word); null otherwise
  * boolean startWith(String prefix): returns true if prefix shows up in the tree

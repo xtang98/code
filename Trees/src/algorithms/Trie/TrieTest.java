@@ -9,6 +9,7 @@ public class TrieTest {
 	@Test
 	public void testValidWord() {
 		ArrayTrie trie = new ArrayTrie();
+		assertTrue(trie.root.arr[0] == null);
 		String word = "abc";
 		assertFalse(trie.find(word));
 		trie.insert("abc");
