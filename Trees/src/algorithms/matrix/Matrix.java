@@ -9,13 +9,19 @@ public class Matrix {
 		//  00, 01, 02
 		//  10, 11, 12
 		//  20, 21, 22
+		// general idea is to visit "circle" by "circle" from outer layer to inner
+		// for each circle:
+		//     1. visit the top row, if there are more than 1 row, continue on step 2-4
+		//     2. visit the left-most column without top/bottom elements (since they are visted by row visitor)
+		//     3. visit the bottom row
+		//      4. visit the right-most column , without top/bottom elements again
 		while (r1<=r2 && c1<=c2) { //works for single element as well
 			//move right [r1][i], visit first row
 			for (int i=c1;i<=c2;i++) System.out.print(a[r1][i]);
 			//move down only if r1<r2, a[i][c2]
 			if (r1<r2) {
 				for (int i=r1+1;i<r2; i++) System.out.print(a[i][c2]);
-				//move right a[r2][i]
+				//move left from right a[r2][i]
 				for(int i=c2;i>=c1;i--) System.out.print(a[r2][i]);
 				//move up only if r1<r2, a[i][c2]
 				for (int i= r2-1; i>r1; i--) System.out.print(a[i][c1]);
