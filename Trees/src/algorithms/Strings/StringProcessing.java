@@ -1,10 +1,190 @@
 package algorithms.Strings;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.PriorityQueue;
 
 public class StringProcessing {
+	/**
+	 * You are given a string, s, and a list of words, words, that are all of the same length. Find all starting indices of substring(s) in s that is a concatenation of each word in words exactly once and without any intervening characters.
+
+		For example, given:
+		s: "barfoothefoobarman"
+		words: ["foo", "bar"]
+		
+		You should return the indices: [0,9].
+		(order does not matter).
+	 * @param s
+	 * @param words
+	 * @return
+	 */
+	public static List<Integer> findSubstringOfConcatAllWords(String s, String[] words) {
+		//If we consider each word is a special "char", then it is reduced to anagram problem
+		List<Integer> ret = new ArrayList<>();
+		//build map for words, get mapCount
+		//init window (start, end) to be (0,0)
+		//loop through s using end pointer
+			//any matched char
+				//map reduce by 1
+				//mapCount-- if this char reduces to 0
+			//while mapCoount == 0 do inner loop using start pointer since we got a solution:
+				//if hit a mached char
+					//increase the count in map
+					//if count>0, it means we should stop here for a solution
+					//record solution by adding start to ret
+		return ret;
+	}
+	/***
+	 * LeetCode 76: Given a string S and a string T, find the minimum window in S which will contain all the characters in T in complexity O(n).
+
+		For example,
+		S = "ADOBECODEBANC"
+		T = "ABC"
+		Minimum window is "BANC".
+		
+		Note:
+		If there is dup in T, window has to contain dup as well, so if T="aa", S="a", there is no solution
+		If there is no such window in S that covers all characters in T, return the empty string "".
+		
+		If there are multiple such windows, you are guaranteed that there will always be only one unique minimum window in S.
+
+	 * @param s
+	 * @param t
+	 * @return
+	 */
+	public static String minWindowSubstring(String s, String t) {
+        //construct map from t, get mapCount
+		Map<Character, Integer> map = new HashMap<>();
+		for (int i=0; i<t.length(); i++) {
+			Character c = t.charAt(i);
+			if (!map.containsKey(c)) map.put(c,  1);
+			else map.put(c, map.get(c)+1); //for dupe, we need to record the total count
+		}
+		int mapCount = map.size();
+		//init window (start, end), minIdx=-1, minLen = s.length()+1
+		int start=0, end=0, minIdx=-1, minLen = s.length()+1;
+		//loop through s using end
+		while (end<s.length()) {
+			//decrease map count for matching chars
+			Character c = s.charAt(end);
+			if (map.containsKey(c)) {
+				map.put(c, map.get(c)-1);
+				if (map.get(c) == 0) mapCount--; 
+			}
+			//while mapCount ==0, we hit a potential solution
+			while(mapCount==0) {
+				//move start to the first matching char that makes count>0
+				Character c0 = s.charAt(start);
+				if (map.containsKey(c0)) {
+					map.put(c0, map.get(c0)+1);
+					if (map.get(c0)>0) {
+						mapCount++;
+						//record solution
+						if ((end-start+1)<minLen) {
+							minIdx = start;
+							minLen = end-start+1;
+						}
+					}
+				}
+				start++;
+			}
+			end++;
+		}
+		return minIdx<0? "" : s.substring(minIdx, minIdx+minLen);
+			
+    }
+	/***
+	 * LeetCode 3: Given a string, find the length of the longest substring without repeating characters.
+	 *	Given "abcabcbb", the answer is "abc", which the length is 3.
+	 * 	Given "bbbbb", the answer is "b", with the length of 1.
+	 *	Given "pwwkew", the answer is "wke", with the length of 3. Note that the answer must be a substring, "pwke" is a subsequence and not a substring.
+	 * @param s
+	 * @return
+	 */
+	public static int lengthOfLongestSubstringNoDup(String s) {
+		int max = 0, start=0, end=0; //maintain a window of no repeating chars
+		Map<Character, Integer> map = new HashMap<>();
+		while (end<s.length()) {
+			Character cur = s.charAt(end);
+			if (map.containsKey(cur)) {
+				//time to move start "pass" dup char, make sure it is moving forward
+				start = Math.max(start, map.get(cur)+1);
+			}
+			//put char into map no matter it is dup or not
+			map.put(cur, end);
+			//update max
+			max = Math.max(max, end-start+1);
+			end++;
+		}
+		return max;
+	}
+	
+    /**
+     * LeetCode 438: Find All Anagrams in a String
+     * Given a string s and a non-empty string p, find all the start indices of p's anagrams in s.
+     * Input: s: "cbaebabacd" p: "abc"
+	 * Output: [0, 6]
+     * 
+     * General idea is sliding window and against a map of Character -> Count, the map always reflect
+     * how many chars are matched by the current window
+     * @param s
+     * @param p
+     * @return
+     */
+    public static List<Integer> findAnagramSubstrings(String s, String p) {
+        List<Integer> ret = new ArrayList<>();
+        //convert p to map: Char->Count
+        Map<Character, Integer> map = new HashMap<>();
+        for (int i=0; i<p.length(); i++) {
+            Character c = p.charAt(i);
+            if (!map.containsKey(c)) map.put(c, 1);
+            else map.put(c, 1+map.get(c));
+        }
+        //initial window (start, end) = (0,0) and mapCount
+        int start = 0, end = 0, count = map.size(); 
+        //move end all the way to the last char, through out the process,
+        //map ALWAYS reflects how many chars are matched by the window
+        //(matched one is deducted in count, thus count indicates #chars not yet matched)
+        while (end<s.length()) {
+            //move end until the map is "exhaused" (indicated by count==0)
+            Character c = s.charAt(end);
+            if (map.containsKey(c)) {
+                map.put(c, map.get(c)-1);
+                if (map.get(c) == 0) count--; //precise match happens for this char
+            }
+            //System.out.println(ret+", start="+start+",end="+end+", map="+map);
+            end++;
+            
+            //if count decreased to zero, we find a match
+            //now need to shrink the start pointer to points to
+            //the first char that is in the map, now (begin, end) 
+            //is the solution if the length matches!!!
+            //as soon as count becomes 1, we exit inner loop and new outer loop starts
+            while (count == 0) {
+                Character cc = s.charAt(start);
+                if (map.containsKey(cc)) {
+                    map.put(cc, map.get(cc)+1);
+                    if (map.get(cc)>0) count++; 
+                    //exit inner loop with precisely one char not matched in the map
+                }
+                //record sol if (start, end) is the same length
+                if (end - start == p.length()) {
+                    ret.add(start);
+                }
+                start++;
+                //now if count>0, we will exit inner loop
+                //(start, end) misses precisely one char, and the map state reflects that
+            }
+        }
+        return ret;
+    }
+	
+	
+	
+	
 	/***
 	 * return true if input string s matches p which is a string with * in it
 	 * a, ab, aab all match a*, but b won't match a*

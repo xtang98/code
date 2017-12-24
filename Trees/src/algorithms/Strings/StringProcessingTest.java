@@ -28,5 +28,24 @@ public class StringProcessingTest {
 	public void testFreqSort() {
 		assertEquals("bbbbaa", StringProcessing.frequencySort("aabbbb"));
 	}
+	@Test
+	public void testFindAnagrams() {
+		assertEquals("[1]", StringProcessing.findAnagramSubstrings("aabbbb", "ab").toString());
+		assertEquals("[0, 6]", StringProcessing.findAnagramSubstrings("cbaebabacd", "abc").toString());
+		assertEquals("[2, 4]", StringProcessing.findAnagramSubstrings("aaabcbaaaa", "abc").toString());
+		
+	}
+	@Test
+	public void testLongestSubstringNoDup() {
+		assertEquals(3, StringProcessing.lengthOfLongestSubstringNoDup("ababc"));
+		assertEquals(3, StringProcessing.lengthOfLongestSubstringNoDup("abcabcbb"));
+		assertEquals(1, StringProcessing.lengthOfLongestSubstringNoDup("bbbbbbbbbb"));
+		assertEquals(2, StringProcessing.lengthOfLongestSubstringNoDup("abba"));
+		assertEquals(3, StringProcessing.lengthOfLongestSubstringNoDup("pwwkew"));
+		
+		
+		
+		
+	}	
 	
 }
