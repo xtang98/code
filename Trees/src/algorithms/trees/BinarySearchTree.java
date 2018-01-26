@@ -41,6 +41,49 @@ public class BinarySearchTree {
 		//      *
 		//insert 15
 	}
+	
+	public void delete(int v) {
+		TreeNode dummy = new TreeNode(0);
+		dummy.right = root;
+		delete(dummy, true, root, v);
+		root = dummy.right;
+	}
+	private void delete(TreeNode parent, boolean goRight, TreeNode cur, int v) {
+		//termination condition
+		if (cur == null) return;
+		if (cur.val == v) {
+			if (cur.left == null) {
+				if (goRight)
+					parent.right = cur.right;
+				else
+					parent.left = cur.right;
+			} else if (cur.right == null) {
+				if (goRight)
+					parent.right = cur.left;
+				else
+					parent.left = cur.left;
+			} else {
+				//both not null
+				//     cur
+				// left  right
+				//take left's right most child
+				TreeNode leftRightMostChild = cur.left;
+				while (leftRightMostChild.right != null)
+					leftRightMostChild = leftRightMostChild.right;
+				cur.val = leftRightMostChild.val;
+				delete(cur, false, cur.left, leftRightMostChild.val);
+			}
+			return;
+		}
+		//go recursive
+		if (v>cur.val) {
+			//go right subtree
+			delete(cur, true, cur.right, v);
+		}
+		//go left subtree
+		delete(cur, false, cur.left, v);
+	}
+	
 	public static void main(String[] args) {
 		BinarySearchTree bst = new BinarySearchTree(new TreeNode(30));
 		bst.insert(new int[] {5,10,15, 40,50,35});

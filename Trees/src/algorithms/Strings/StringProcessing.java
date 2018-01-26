@@ -8,7 +8,41 @@ import java.util.Map;
 import java.util.PriorityQueue;
 
 public class StringProcessing {
+	/**LeetCode:
+	 * Longest Substring with At Most Two Distinct Characters
+	 * e.g. aaabc ==> 4 because aaab is the max window with two chars (a, b), for  aaabcdddd => 5, because cdddd is the max window with two chars (c,d)
+	 * https://leetcode.com/problems/longest-substring-with-at-most-two-distinct-characters/
+	 * In this solution, a hashmap is used to track the unique elements in the map. When a third character is added to the map, the left pointer needs to move right.
+	 */
+	public static int lengthOfLongestSubstringTwoDistinct(String s) {
+		int len = 0, start = 0, end = 0, counter = 0;
+		Map<Character, Integer> map = new HashMap<>();
+		//loop over s using end pointer, the inner loop make sure window contains 2 distinct chars always
+		while (end<s.length()) {
+			//put char in map
+			Character c = s.charAt(end);
+			map.put(c, map.getOrDefault(c, 0)+1);
+			//if count is 1, counter++
+			if (map.get(c) == 1) counter++;
+			end++;
+			
+			//while counter>2, window violates the 2-distinct property, advance start pointer until it passes the first distinct char
+			while(counter>2) {
+				//reduce map count for start char
+				Character c0 = s.charAt(start);
+				map.put(c0, map.get(c0)-1);
+				//if it reaches 0, 2-distinct property is restored now, counter -- (this will exit the loop)
+				if (map.get(c0) == 0) counter --; //
+				start++;
+			}
+			//for every loop, update len to take the max(len, end-start) 
+			System.out.println("start="+start+", end="+end+", counter = "+counter);
+			len = Math.max(len, end-start);
+		}
+		return len;
+	}
 	/**
+	 * Leetcode 30. Substring with Concatenation of All Words
 	 * You are given a string, s, and a list of words, words, that are all of the same length. Find all starting indices of substring(s) in s that is a concatenation of each word in words exactly once and without any intervening characters.
 
 		For example, given:
@@ -25,16 +59,48 @@ public class StringProcessing {
 		//If we consider each word is a special "char", then it is reduced to anagram problem
 		List<Integer> ret = new ArrayList<>();
 		//build map for words, get mapCount
+		Map<String, Integer> map = new HashMap<>();
+		for (String w: words) {
+			map.put(w, map.getOrDefault(w, 0)+1);
+		}
+		int mapCount = map.size();
 		//init window (start, end) to be (0,0)
+		int start = 0, end = 0, wordLen=words[0].length();
+		
 		//loop through s using end pointer
-			//any matched char
+		while (end+wordLen<=s.length()) {
+			System.out.println(map);
+
+			String cur = s.substring(end, end+wordLen);
+			//any matched word
+			if (map.containsKey(cur)) {
 				//map reduce by 1
+				map.put(cur, map.get(cur)-1);
 				//mapCount-- if this char reduces to 0
+				if (map.get(cur) == 0) mapCount--;
+			}
+			end+=wordLen;
+
 			//while mapCoount == 0 do inner loop using start pointer since we got a solution:
+			while (mapCount == 0) {
 				//if hit a mached char
+				String startWord = s.substring(start, start+wordLen);
+				if (map.containsKey(startWord)) {
 					//increase the count in map
+					map.put(startWord, map.get(startWord)+1);
 					//if count>0, it means we should stop here for a solution
-					//record solution by adding start to ret
+					if (map.get(startWord)>0) {
+						//increase mapCount to exit inner loop
+						mapCount++;
+					}
+					//if lengh matches, we got a solution
+					if (end-start == wordLen*words.length) {
+						ret.add(start);
+					}
+				}
+				start+=wordLen;
+			}
+		}
 		return ret;
 	}
 	/***
@@ -74,24 +140,25 @@ public class StringProcessing {
 				map.put(c, map.get(c)-1);
 				if (map.get(c) == 0) mapCount--; 
 			}
+			end++;
+
 			//while mapCount ==0, we hit a potential solution
 			while(mapCount==0) {
 				//move start to the first matching char that makes count>0
 				Character c0 = s.charAt(start);
 				if (map.containsKey(c0)) {
 					map.put(c0, map.get(c0)+1);
-					if (map.get(c0)>0) {
+					if (map.get(c0)>0) { //have to check this e.g. aaaab vs aab
 						mapCount++;
 						//record solution
-						if ((end-start+1)<minLen) {
+						if ((end-start)<minLen) {
 							minIdx = start;
-							minLen = end-start+1;
+							minLen = end-start;
 						}
 					}
 				}
 				start++;
 			}
-			end++;
 		}
 		return minIdx<0? "" : s.substring(minIdx, minIdx+minLen);
 			
@@ -256,6 +323,21 @@ public class StringProcessing {
 	        }
 	        return sb.toString();
 	    }
+	    
+	    public static void main(String[] args) {
+	    	//System.out.println("ok");
+	    	//System.out.println(findSubstringOfConcatAllWords("aaa", new String[] {"aa","aa"}));
+	    	//System.out.println(findSubstringOfConcatAllWords("wordgoodgoodgoodbestword", 
+	    	//		new String[] {"word","good","best","good"}));
+	    	
+	    	System.out.println("barfoothefoobarman [foo, bar]\n");
+	    	System.out.println(findSubstringOfConcatAllWords("barfoothefoobarman", 
+	    			new String[] {"foo","bar"}));
+	    	System.out.println("max window for 2 dinstict chars:");
+	    	System.out.println(lengthOfLongestSubstringTwoDistinct("aaabc"));
+	    	System.out.println(lengthOfLongestSubstringTwoDistinct("aaabcdddd"));
+	    	
+	    }
 	}
 	class Pair {
 	    Character c;
@@ -263,5 +345,5 @@ public class StringProcessing {
 	    public Pair(Character c, int count) {
 	        this.c=c;
 	        this.count = count;
-	    }
-}
+	        }
+	}
