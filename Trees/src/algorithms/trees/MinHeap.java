@@ -4,15 +4,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class MaxHeap {
+public class MinHeap {
 	//array a with len n, 0-based with these functions
 	// left = 2*i+1, right=2*i+2 on 0-based array
 	// parent = (i-1)/2 (this means the last node's parent is (n-1)/2!!)
 	int n;
 	int[] a;
 	int count = 0;
-	protected MaxHeap() {}
-	public MaxHeap(int n) {
+	protected MinHeap() {}
+	public MinHeap(int n) {
 		this.n = n;
 		a = new int[n];
 		count = 0;
@@ -24,24 +24,24 @@ public class MaxHeap {
 		if (count>=n) throw new RuntimeException("heap overflow!");
 		int i = count++;
 		//travel up to find a spot for key
-		while (i>0 && a[parent(i)]<key) {
+		while (i>0 && a[parent(i)]>key) {
 			a[i] = a[parent(i)];
 			i = parent(i);
 		}
 		a[i] = key;
 	}
 	
-	public int maxKey() {
+	public int minKey() {
 		if (count == 0) throw new RuntimeException("no element in the heap!");
 		return a[0];
 	}
 	
-	public int extractMax() {
+	public int extractMin() {
 		if (count == 0) throw new RuntimeException("no element in the heap!");
-		int max = a[0];
+		int min = a[0];
 		a[0] = a[--count];
 		heapify(a, count, 0);
-		return max;
+		return min;
 	}
 	
 	public static int left(int i) {return 2*i+1;}
@@ -55,12 +55,12 @@ public class MaxHeap {
 		//System.out.println("heapifying "+i+":"+Arrays.toString(a));
 		int l = left(i);
 		int r = right(i);
-		int maxIdx = i;
-		if (l<n && a[l]>a[i]) maxIdx = l;
-		if (r<n && a[r]>a[maxIdx]) maxIdx = r;
-		if (maxIdx != i) {
-			swap(a,i,maxIdx);
-			heapify(a,n,maxIdx);
+		int minIdx = i;
+		if (l<n && a[l]<a[i]) minIdx = l;
+		if (r<n && a[r]<a[minIdx]) minIdx = r;
+		if (minIdx != i) {
+			swap(a,i,minIdx);
+			heapify(a,n,minIdx);
 		}
 	}
 	
@@ -70,14 +70,14 @@ public class MaxHeap {
 		    int i = root;
 		    while (i<n) {
 		      int l = 2*i+1; int r = 2*i+2;
-		      int maxIdx = i;
-		      if (l<n && a[l]> a[i]) maxIdx = l;
-		      if (r<n && a[r]>a[maxIdx]) maxIdx = r;
+		      int minIdx = i;
+		      if (l<n && a[l]< a[i]) minIdx = l;
+		      if (r<n && a[r]<a[minIdx]) minIdx = r;
 		      //no action needed, done!
-		      if (i == maxIdx) break;
+		      if (i == minIdx) break;
 		      //swap i and maxIdx, move i to maxIdx
-		      swap(a, i, maxIdx);
-		      i = maxIdx;
+		      swap(a, i, minIdx);
+		      i = minIdx;
 		    }
 	  }
 	public static void buildHeap(int[] a, int n) {
@@ -86,26 +86,20 @@ public class MaxHeap {
 			heapify(a, n, i);
 		}
 	}
-	/**
-	 * Standard heap sort:
-	 * 1) Build a Max heap, then keep extracting the root and swap it to the last element
-	 * 2) heap size reduced by one, do a heapify from root to restore order
-	 * @param a
-	 */
-	public static void heapSortAscendingUsingMaxHeap(int[] a) {
+	
+	public static void heapSortBigToSmallUsingMinHeap(int[] a) {
 		int len = a.length;
-		buildHeap(a,len);
+		buildHeap(a,len); //now we have a mean heap, min is at top
 		for (int n=len-1; n>0; n--) {
 			swap(a,n,0);
 			heapify(a,n,0);
 		}
 	}
 	
-
 	public static void main(String[] args) {
 		int[] a = new int[] {3,4,7,6, 99,23,3,5,8,9,456,78,2345};
 		//MaxHeap.buildHeap(a, a.length);
-		MaxHeap.heapSortAscendingUsingMaxHeap(a);
+		MinHeap.heapSortBigToSmallUsingMinHeap(a);
 		System.out.println(Arrays.toString(a));
 		MaxPriorityQueue pq = new MaxPriorityQueue(10);
 		pq.insert(3);

@@ -1,7 +1,10 @@
 package algorithms.graph;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 
 public class CourseSchedule {
@@ -19,7 +22,7 @@ public class CourseSchedule {
 		//loop through prerequisites to populate the graph
 		for (int i=0; i<prerequisites.length; i++) {
 			int[] pair = prerequisites[i];
-			//pair[0] needs pair[1], so in graph it is: pair[1] --> pair[0] 
+			//[x,y] means x needs y, so in graph it is: y --> x
 			graph[pair[1]].add(pair[0]);
 		}
 		//detect if graph has circle, for directed graph, we detect a circle if we hitting the
@@ -57,7 +60,7 @@ public class CourseSchedule {
 		}
 		for (int i=0; i<prerequisites.length; i++) {
 			int u = prerequisites[i][0];
-			int v = prerequisites[i][1]; //(u,v): v requires u first, so v-->u
+			int v = prerequisites[i][1]; //(u,v): u requires v, so v-->u
 			g[v].add(u);
 		}
 		
@@ -89,14 +92,50 @@ public class CourseSchedule {
 		
 		//go recursive for unvisited node
 		visited[u] = 1; //mark as visiting
-		st.push(u); //push it to stack
 		for (int v: g[u]) {
 			if (hasCircle2(v, g, visited, st)) return true;
 		}
 		visited[u] = 2; //mark as visited, done
+		st.push(u); //push it to stack, so last in the push gets pushed first
 		return false;
 	}
 	
+	//684. Redundant Connection. General Idea: while we building the "undirected" graph, before putting in any edge (u,v), try to do a DFS to see
+	//if we can reach from u to v, if we can, obviously this edge is redundant.
+	public static int[] findRedundantConnection(int[][] edges) {
+		//build a empty graph initially
+		int maxIdx = getMaxIdx(edges);
+		List<Integer>[] g = new ArrayList[maxIdx+1];
+		for (int i=0; i<g.length; i++) {
+			g[i] = new ArrayList<>();
+		}
+		//now try out every edge (u,v) to see if we can reach from u to v without this edge; if so, then (u,v) is redundant!!!
+		for (int[] e: edges) {
+			int u = e[0], v=e[1];
+			if (canReach(g, u, v, new HashSet<Integer>())) return e;
+			g[u].add(v);
+			g[v].add(u);
+		}
+		return null;
+    }
+	
+	private static boolean canReach(List<Integer>[] g, int u, int v, Set<Integer> visited) {
+		if (visited.contains(u)) return false; //hit node already visited
+		if (u==v) return true;
+		visited.add(u);
+		for (int x: g[u]) {
+			if (canReach(g, x,v, visited)) return true;
+		}
+		return false;
+	}
+	private static int getMaxIdx(int[][] edges) {
+		int ret = -1;
+		for (int[] e: edges) {
+			ret = Math.max(ret, Math.max(e[0], e[1]));
+		}
+		if (ret<0) throw new RuntimeException("no nodes found!");
+		return ret;
+	}
 	
 	
 	public static void main(String[] args) {
@@ -108,9 +147,10 @@ public class CourseSchedule {
 		System.out.println("canFinish(2, {1,0}}="+yes);
 
 		System.out.println("getOrder(2, {1,0}}="+getOrder(2, new int[][] {{1,0}}));
-
-		System.out.println("getOrder(6, {0,1},{1,2},{2,5},{3,4},{4,5}}="+getOrder(6, new int[][] {{0,1},{1,2},{2,5},{3,4},{4,5}}));
-
-
+		//0->1->2->5 3->4->5
+		int numOfCourse = 6;
+		int[][] courses = new int[][] {{1,0}, {2,1},{5,2},{4,3}, {5,4}};
+		System.out.println("getOrder("+Arrays.deepToString(courses)+") ====== "+getOrder(numOfCourse, courses));
+		System.out.println(findRedundantConnection(courses));
 	}
 }

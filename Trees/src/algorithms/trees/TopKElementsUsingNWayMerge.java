@@ -5,6 +5,7 @@ package algorithms.trees;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -16,15 +17,21 @@ import java.util.Map;
  *
  */
 
+//use to track both Integer ojbect and server index
+class ServerItem  {
+    int num, idx;
+    public ServerItem(int n, int i) {num=n;idx=i;}
+    public String toString() {return "["+num+"->at server "+idx+"]";}
+}
 
-public class TopKElements {
+public class TopKElementsUsingNWayMerge {
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		int[] nums = new int[] {1,1,1,1,2,2,2,3,4,4};
 		int k = 3;
 		//List<Integer> list = new TopKElements().topKFrequent(nums, k);
-		List<Integer> list = new TopKElements().topKFrequentUsingPQ(nums, k);
+		List<Integer> list = new TopKElementsUsingNWayMerge().topKFrequentUsingPQ(nums, k);
 		
 		System.out.println(Arrays.toString(list.toArray()));
 		
@@ -70,10 +77,62 @@ public class TopKElements {
 		while (q.size()>0) {
 			System.out.print(q.poll()+",");
 		}
+		System.out.println();
+		
+		//running example
+		// 7,4,1
+		// 8,5,2
+		// 6,9,3,0, 10
+		int N = 3;
+		List<Integer>[] numbers = new List[N];
+		numbers[0] = new ArrayList(Arrays.asList(7,4,1));
+		numbers[1] = new ArrayList(Arrays.asList(8,5,2));
+		numbers[2] = new ArrayList(Arrays.asList(6,9,3,0));
+		numbers[2].add(10);
+		System.out.println("N-way merge sort:"+numbers[0]+numbers[1]+numbers[2]+"\n==>"+sortServerCollection(numbers));
 		
 	}
 	
 
+
+	/**
+	 * N-Way or K-Way Merge Sort using priority queue
+	 * @param nums
+	 * @return
+	 */
+	public static List<Integer> sortServerCollection(List<Integer>[] nums) {
+		int N=nums.length;
+		//sort nums for each server
+		for (int i=0; i<N; i++) Collections.sort(nums[i]);
+		//build a priority queue against server items with defined comparator on number
+		java.util.PriorityQueue<ServerItem> pq = new java.util.PriorityQueue<ServerItem>(
+				N,
+				new Comparator<ServerItem>(){
+		    		@Override
+		    		public int compare(ServerItem c1, ServerItem c2) {
+		                return (c1.num - c2.num);
+		            }
+		    	}
+				);
+		for (int i=0; i<N; i++) {
+			ServerItem si = new ServerItem(nums[i].remove(0), i);
+			if (!nums[i].isEmpty()) pq.offer(si);
+		}
+		//build result
+		List<Integer> ret = new ArrayList<>();
+		while (!pq.isEmpty()) {
+			ServerItem cur = pq.poll();
+			ret.add(cur.num);
+			if (!nums[cur.idx].isEmpty()) pq.offer(new ServerItem(nums[cur.idx].remove(0), cur.idx));
+		}
+		
+		return ret;
+	}
+	
+	
+	
+	
+	
 	
 	//using built in priority queue with custom comparer
     public List<Integer> topKFrequentUsingPQ(int[] nums, int k) {

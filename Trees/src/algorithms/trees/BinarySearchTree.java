@@ -8,6 +8,24 @@ public class BinarySearchTree {
 	public BinarySearchTree(TreeNode n) {
 		root = n;
 	}
+	
+	/**
+	 * Find the least common ancestor of a binary search tree for given nodes a and b
+	 * Key idea: first node whose value is within [a.val, b.val], according to BST property
+	 * @param root
+	 * @param a
+	 * @param b
+	 * @return
+	 */
+	public static TreeNode lca(TreeNode root, TreeNode a, TreeNode b) {
+		if (root == a || root ==b || (root.val<b.val && root.val >a.val))
+			return root;
+		if (root.val< a.val)
+			return lca(root.right, a, b);
+		else
+			return lca(root.left, a, b);
+	}
+	
 	public void insert(int[] vals) {
 		for (int i=0; i<vals.length; i++) {
 			insert(vals[i]);

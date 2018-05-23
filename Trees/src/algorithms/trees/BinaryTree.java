@@ -73,5 +73,22 @@ public class BinaryTree {
 		dfs(root.left, key-1, map, minmax);
 		dfs(root.right, key+1, map, minmax);
 	}
+	
+	/**
+	 * find the least common ancenstor of given two nodes a and b, starting from root node
+	 * @param root
+	 * @param a
+	 * @param b
+	 * @return
+	 */
+	public static TreeNode lca(TreeNode root, TreeNode a, TreeNode b) {
+		//termination condition
+		if (root == null || root == a || root ==b) return root;
+		//go recursive
+		TreeNode left = lca(root.left, a, b);
+		TreeNode right = lca(root.right, a, b);
+		if (left != null && right != null) return root; // first node that left got a, right got b
+		return left == null? right: left;
+	}
 
 }
