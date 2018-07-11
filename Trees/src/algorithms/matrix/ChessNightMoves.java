@@ -9,11 +9,22 @@ import java.util.Set;
 
 public class ChessNightMoves {
 
+	/**
+	 * chessboard with dimension NxN, find shortest number of steps for a knight to jump from position start to position end
+	 * TODO: one variation is to mark some cells with 1 indicating that cell is occupied and knight cannot move to it
+	 * Expect: Ask about how big is the board? Can we really always reach a answer? thought process? BFS with q? 
+	 * e.g. (1,1) --> (2,3), the answer will be 1; (1,1)--> (3,5), the answer will be 2
+	 * @param start
+	 * @param end
+	 * @param N
+	 * @return
+	 */
 	public static int minStep(Cell start, Cell end, int N) {
 		int steps = 0;
 		Queue<Cell> q = new LinkedList<>();
 		q.offer(start);
 		Set<Cell> visited = new HashSet<>();
+		visited.add(start); //mark as visited right after enqueuong
 		while (!q.isEmpty()) {
 			int rowCount = q.size();
 			for (int i=0; i<rowCount; i++) {
@@ -26,10 +37,11 @@ public class ChessNightMoves {
 				for(Cell c: get8moves(cur)) {
 					if (!visited.contains(c) && inBound(c, N)) {
 						q.offer(c);
+						//mark it as visited in the end!
+						visited.add(c);
+
 					}
 				}
-				//mark it as visited in the end!
-				visited.add(cur);
 				System.out.print(cur);
 			}
 			System.out.println();
@@ -44,25 +56,31 @@ public class ChessNightMoves {
 		Queue<Cell> q = new LinkedList<>();
 		Set<Cell> visited = new HashSet<>();
 		q.offer(start);
+		visited.add(start); //mark as visited as soon as we enqueue it
+		int qCount = 0;
 		while(!q.isEmpty()) {
 			//dequeue and check if it is the answer
 			Cell cur = q.poll();
+			qCount++;
 			if (cur.equals(end)) {
 				while (cur != start) {
 					path.add(0, cur);
 					cur = cur.parent;
 				}
 				path.add(0, cur);
+				System.out.println("\nqCount="+qCount);
+
 				return path;
 			}
 			//enqueue 8 kids if they are not visited && still in bound
 			for (Cell c: get8moves(cur)) {
-				if (!visited.contains(cur) && inBound(c, N)) {
+				if (!visited.contains(c) && inBound(c, N)) {
 					q.offer(c);
+					//mark it as visited after enqueuing, to avoid enqueuing same ndoe twice!!
+					visited.add(c);
 				}
 			}
-			//mark it as visited after done with it
-			visited.add(cur);
+			//visited.add(cur); //this  will enqueue 2122 nodes vs 147 nodes when mark it right after enqueue each node
 		}
 		return path;
 	}
