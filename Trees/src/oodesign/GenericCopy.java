@@ -34,30 +34,7 @@ public class GenericCopy {
     	}
     }
     
-    /**
-     * Merge b into a
-     * @param a
-     * @param b
-     * @throws IllegalAccessException 
-     * @throws IllegalArgumentException 
-     */
-    public static <T> void mergeFields(T from, T to, boolean honorLast) throws Exception {
-    	for (Field f : to.getClass().getFields()) {
-    		if (isPrimitivish(f.getType())) {
-    			//we copy over if:
-    			//1. pure primitive (int, float etc) and we honor first
-    			//2. primitive wrapper (Integer e.g)
-    			if ((f.getType().isPrimitive() && !honorLast) ||
-    				(!f.getType().isPrimitive() && (f.get(to)== null || !honorLast))) {
-    				f.set(to, f.get(from));
-    			}
-    		} else if () {
-    			if (!honorLast) {
-    				f.set(to, f.get(from));
-    			}
-    		}
-    	}
-    }
+
     
     public boolean doesObjectContainField(Object object, String fieldName) {
         return Arrays.stream(object.getClass().getFields())

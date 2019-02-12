@@ -1,7 +1,9 @@
-package oodesign;
+package utils;
 
 import java.io.IOException;
 import java.util.Random;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
 
 interface IRetriable<T extends Exception, T2 extends Object>
 {
@@ -28,6 +30,23 @@ public class RetryUtils {
 	    }
 	}
 	
+	public static <V extends Object> V retryCallable(int retryCount, long initWait, Log log, Callable<V> c) throws Exception {
+		//Executors.newFixedThreadPool(10);
+		for (int retries = 0;; retries++) {
+	        try {
+	        	return c.call();
+	        } catch (Exception e) {
+	            if (retries < retryCount) {
+	            	if (log != null)
+	            		log.error("logging: retry #"+retries+"failed ...");
+	            	Thread.sleep(initWait * (1 <<retries));
+	                continue;
+	            } else {
+	                throw e;
+	            }
+	        }
+	    }
+	}
 	public static void unreliable(Random rand) {
 		switch(rand.nextInt(4)) {
 			case 0:
@@ -54,6 +73,7 @@ public class RetryUtils {
 	}
 	
 	public static void main(String[] args) throws IOException {
+		
 		Random rand = new Random();
 		int numRetries = 2;
 		// TODO Auto-generated method stub
